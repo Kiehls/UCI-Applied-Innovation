@@ -1,0 +1,17 @@
+{
+  "name": "bcs",
+  "description": "UCI Applied Innovation jqeury",
+  "main": "",
+  "license": "MIT",
+  "homepage": "https://github.com/Kiehls/UCI-Applied-Innovation",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.1.1"
+  }
+}
