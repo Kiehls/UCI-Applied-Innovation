@@ -7,22 +7,25 @@ var bodyParser = require('body-parser');
 var sys = require('sys');
 var exec = require('child_process').exec;
 var time = require('time');
+// var io = require('socket.io')(server);
 require('date-utils');
 
 var child;
 var temhum;
 
+// var message = new gcm.Message ();
 var regIds = [];
+
+var ip = "52.79.186.152";
+var port = 3001;
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-
 var app = express();
-
 // child = exec ('mkdir /tmp/stream', function (error, stdout, stderr) { // For video streaming
 // });
 // child = exec ('raspistill --nopreview -w 640 -h 480 -q 5 -o /tmp/stream/pic3.jpg -tl 100 -t 55555 -th 0:0:0 &', function (error, stdout, stderr) {
-// }); // For video streaming
+// }); // For video
 // child = exec ('python ./detecting.py 22 4', function (error, stdout, stderr) { // For detecting temp-hum
 // });
 // child = exec ('LD_LIBRARY_PATH=/usr/local/lib mjpg_streamer -i "input_file.so -f /tmp/stream -n pic.jpg" -o "output_http.so -w /usr/local/www"', function (error, stdout, stderr) {
@@ -33,6 +36,21 @@ var app = express();
 // }); // For send sleeping's data to Android
 
 console.log ('Server is waiting for connection');
+
+// io.on('connection', function (data) {
+//     console.log('client connected!');
+//
+//     client.on('data', function(data) {
+//         console.log(data);
+//         var signal = data.toString();
+//         if(signal == 1) {
+//             console.log("Signal == 1");
+//         }
+//         else {
+//             console.log("Signal != 1");
+//         }
+//     });
+// });
 
 var starTime = 0;
 var wakeUp = 0;
@@ -52,9 +70,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'bower_components')));
 
 app.use('/', index);
 // app.use('/users', users);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
