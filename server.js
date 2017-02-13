@@ -48,7 +48,7 @@ var server = require('net').createServer(function(socket) {
 			console.log ('Temp-Hum signal is detected');
 
 			child = exec ('sudo ./AdafruitDHT.py 22 4', function (error, stdout, stderr) {
-				temhum = stdout;		
+				temhum = stdout;
 				socket.write (temhum); // Send temp-hum and in-appropriate information to android
 				socket.end ();
 			});
@@ -72,7 +72,7 @@ var server = require('net').createServer(function(socket) {
 			// Send GCM messages to all connected user's android
 			var i;
 			console.log ('Temperature inappropriate signal is detected');
-		
+
 			var message = new gcm.Message ({
 				collapseKey: 'demo',
 				delayWhileIdle: true,
@@ -134,7 +134,7 @@ var server = require('net').createServer(function(socket) {
 
 			var server_access_key = 'AIzaSyCAkwJgDPnLbwZwKz7grVxhs7iXtkx6wmo';
 			var sender = new gcm.Sender (server_access_key);
-				
+
 			for (i=0; i<regIds.length; i++)
 			{
 				sender.send (message, regIds[i], 4, function (err, result) {
@@ -143,13 +143,13 @@ var server = require('net').createServer(function(socket) {
 			}
 		}
 		else if (signal == 7)
-		{	
+		{
 			// Send GCM messages to all connected user's android
 			console.log ('Baby crying signal is detected');
 			wakeUp+=1;
 			if (sleeping == 1 && babyGcmOff == 0)
 			{
-				var i;		
+				var i;
 
 				var message = new gcm.Message ({
 					collapseKey: 'demo',
@@ -159,7 +159,7 @@ var server = require('net').createServer(function(socket) {
 						key1: '아기가 깬 것 같습니다 !!'
 					}
 				});
-			
+
 				var server_access_key = 'AIzaSyCAkwJgDPnLbwZwKz7grVxhs7iXtkx6wmo';
 				var sender = new gcm.Sender (server_access_key);
 
@@ -169,7 +169,7 @@ var server = require('net').createServer(function(socket) {
 						console.log (result);
 					});
 				}
-		
+
 				child = exec ('omxplayer /home/pi/voice.mp4', function(err, stdout, stderr) {
 				}); // Play parents voice
 			}
@@ -177,7 +177,7 @@ var server = require('net').createServer(function(socket) {
 		else if (signal == 8)
 		{ // Start baby monitoring
 			console.log ('Baby is now sleeping');
-			startTime = time.time(); // For show baby's total sleeping time to parents	
+			startTime = time.time(); // For show baby's total sleeping time to parents
 			sleeping = 1;
 			wakeUp = 0;
 			child = exec ('python babyCrying.py', function (error, stdout, stderr) {
@@ -186,7 +186,7 @@ var server = require('net').createServer(function(socket) {
 		else if (signal == 9)
 		{ // End baby monitoring
 			console.log ('Baby is now wake up')
-			
+
 			var endTime = time.time();
 			var totalTime = endTime - startTime;
 			console.log ('Time : ', totalTime);
@@ -195,7 +195,7 @@ var server = require('net').createServer(function(socket) {
 			wakeUp-=1;
 			// Extract now date
 			var date = new Date();
-			var year = date.getFullYear(); 
+			var year = date.getFullYear();
 			var month = (date.getMonth() + 1);
 			var day = date.getDate();
 			var date1;
@@ -212,18 +212,18 @@ var server = require('net').createServer(function(socket) {
 			{
 				var minutesTmp = Math.floor(totalTime/60);
 				var seconds = totalTime%60;
-	
+
 				if (minutesTmp >= 60)
 				{
 					var hours = floor(minutesTmp/60);
 					var minutes = minutesTmp%60;
 
 					console.log ('%d 시간 %d 분 %d 초', hours, minutes, seconds);
-					
-					// Send data to Android				
+
+					// Send data to Android
 					socket.write (1 + "." + hours + "." + minutes + "." + seconds + "." + wakeUp);
 					socket.end();
-				
+
 					// Record data to DB using python
 					var net = require ('net');
 					var client = new net.Socket();
@@ -235,7 +235,7 @@ var server = require('net').createServer(function(socket) {
 				else
 				{
 					console.log ('%d 분 %d 초', minutesTmp, seconds);
-					
+
 					// Send data to Android
 					socket.write (1 + "." + 0 + "." + minutesTmp + "." + seconds + "." + wakeUp);
 					socket.end();

@@ -25,7 +25,7 @@ from socket import *
 import Adafruit_DHT
 import time
 
-host = '192.168.0.54'
+host = '52.79.186.152'
 port = 8082
 addr = (host,port)
 
