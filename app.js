@@ -20,8 +20,6 @@ var temhum;
 // var message = new gcm.Message ();
 var regIds = [];
 
-var ip = "52.79.186.152";
-
 var index = require('./routes/index');
 var users = require('./routes/users');
 var app = express();
@@ -64,6 +62,10 @@ io.on('connection', function(client) {
         var signal = data.toString();
         if(signal == 1) {
             console.log ('Temp-Hum signal is detected');
+            child = exec('python test.py', function(err, stdout, stderr) {
+                    temhum = stdout;
+                    console.log(temhum);
+                    });
         }
         else if(signal == 2) {
             console.log ('Voice signal is detected');
