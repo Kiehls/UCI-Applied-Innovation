@@ -25,12 +25,16 @@ from socket import *
 import Adafruit_DHT
 import time
 
-host = '52.79.186.152'
-port = 8082
+host = '192.168.0.44'
+port = 3001
 addr = (host,port)
 
 tcpClientSocket = socket(AF_INET, SOCK_STREAM)
-tcpClientSocket.connect(addr)
+try:
+	tcpClientSocket.connect(addr)
+except Exception as e:
+	print('%s: %s' % ADDR)
+	sys.exit()
 
 # Parse command line parameters.
 sensor_args = { '11': Adafruit_DHT.DHT11,
@@ -65,7 +69,7 @@ while True:
 
 		totalTimer = (endTimer - startTimer) / 600 # Check temp-hum data every 10minutes.
 
-		if 22 <= temperature and temperature <= 24:
+		if 22 <= temperature and temperature <= 27:
 			print 'Temperature is appropriate'
 
 			tempIn = 0
@@ -88,16 +92,18 @@ while True:
 		
 		if tempIn == 1 and humIn == 0: # This is temp-inappropriate
 			if totalTimer >= 1:
+				print "4"
 				tcpClientSocket.send ('4')
 				endTimer = 0
 				startTimer = 0
 				startTimer = time.time()
 		elif humIn == 1 and tempIn == 0:
-			if totalTimer >= 1: # This is hum-inappropriate
-				tcpClientSocket.send ('5')
-				endTimer = 0
-				startTimer = 0
-				startTimer = time.time()
+			print "5"
+			# if totalTimer >= 1: # This is hum-inappropriate
+			tcpClientSocket.send('5')
+			endTimer = 0
+			startTimer = 0
+			startTimer = time.time()
 		elif humIn == 1 and tempIn == 1: # This is Temp-Hum inappropriate
 			print totalTimer
 			if totalTimer >= 1:
