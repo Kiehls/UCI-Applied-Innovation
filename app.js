@@ -25,6 +25,7 @@ var users = require('./routes/users');
 var app = express();
 
 var server = http.createServer(app);
+console.log("------Server Start------");
 
 var starTime = 0;
 var wakeUp = 0;
@@ -39,6 +40,9 @@ var babyGcmOff = 0;
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+child = exec('raspivid -t 0 -h 720 -w 1280 -fps 25 -hf -b 2000000 -o - | gst-launch-1.0 -v fdsrc ! h264parse ! rtph264pay config-interval=1 pt=96 ! gdppay ! tcpserversink host=192.168.0.44 port=5000', function(err, stdout, stderr) {
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -62,13 +66,18 @@ io.on('connection', function(client) {
         var signal = data.toString();
         if(signal == 1) {
             console.log ('Temp-Hum signal is detected');
-            child = exec('python test.py', function(err, stdout, stderr) {
+            child = exec('raspivid -t 0 -h 720 -w 1280 -fps 25 -hf -b 2000000 -o - | gst-launch-1.0 -v fdsrc ! h264parse ! rtph264pay config-interval=1 pt=96 ! gdppay ! tcpserversink host=192.168.0.44 port=5000', function(err, stdout, stderr) {
                     temhum = stdout;
                     console.log(temhum);
                     });
         }
         else if(signal == 2) {
             console.log ('Voice signal is detected');
+            child = exec('sudo ./a.out', function(err, stdout, stderr) {
+                    console.log(stdout);
+                    process.stdout.write(stdout);
+                    console.log("Signal is 2");
+                    });
         }
         else if(signal == 3) {
             console.log ('Streaming signal is detected');
